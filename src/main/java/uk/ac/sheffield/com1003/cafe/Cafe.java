@@ -125,7 +125,7 @@ public class Cafe {
         int i = indexNextOrderToServe;
         while (i < orders.length) {
             sb .append(orders[i].toString());
-            sb.append(lineBreak)
+            sb.append(lineBreak);
             i++;
         }
         System.out.println(sb.toString());
