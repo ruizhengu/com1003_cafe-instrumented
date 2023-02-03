@@ -61,7 +61,7 @@ public class Cafe {
     /**
      * Add the given recipe to the menu.
      * 
-     * @param recipe Recipe to be added to menu
+     * @param newRecipe Recipe to be added to menu
      * @return Returns true if there is space in the menu and new recipe is successfully added; false otherwise
      */
     public boolean addRecipe(Recipe newRecipe) {
