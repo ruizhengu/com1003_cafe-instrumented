@@ -4,7 +4,7 @@ public class Coffee extends Ingredient {
     private boolean decaf;
 
     public Coffee() {
-        this(30);
+        this(8);
     }
 
     public Coffee(int amount) {

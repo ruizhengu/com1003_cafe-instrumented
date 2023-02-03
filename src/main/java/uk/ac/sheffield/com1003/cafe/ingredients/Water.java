@@ -3,7 +3,7 @@ package uk.ac.sheffield.com1003.cafe.ingredients;
 public class Water extends Ingredient {
 
     public Water() {
-        this(100);
+        this(30);
     }
 
     public Water(int amount) {
