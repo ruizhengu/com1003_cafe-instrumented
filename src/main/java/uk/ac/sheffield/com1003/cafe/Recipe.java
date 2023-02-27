@@ -28,6 +28,7 @@ public class Recipe {
      * Add ingredient to recipe if it does not already exist.
      * If ingredient with the same name already exists, replace it with the new one.
      * @param ingredient Ingredient to be added to recipe.
+     * @throws TooManyIngredientsException if the number of ingredients in the recipe would be exceeded
      */
     public void addIngredient(Ingredient ingredient) throws TooManyIngredientsException {
         int i = 0;
