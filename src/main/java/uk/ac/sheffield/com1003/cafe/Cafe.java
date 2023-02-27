@@ -147,6 +147,8 @@ public class Cafe {
         sb.append(sectionSep);
         sb.append(greeting());
         sb.append(lineBreak);
+        sb.append("Menu");
+        sb.append(lineBreak);
         sb.append(sectionSep);
         for (Recipe recipe : menu) {
             if (recipe != null) {
