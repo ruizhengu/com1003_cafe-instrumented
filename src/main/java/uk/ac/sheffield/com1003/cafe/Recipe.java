@@ -63,10 +63,4 @@ public class Recipe {
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "Recipe [name=" + name + ", price=" + price + ", size=" + size + ", ingredients="
-                + Arrays.toString(ingredients) + "]";
-    }
 }

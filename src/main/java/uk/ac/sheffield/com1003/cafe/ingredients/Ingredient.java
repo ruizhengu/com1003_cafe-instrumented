@@ -1,8 +1,8 @@
 package uk.ac.sheffield.com1003.cafe.ingredients;
 
 public abstract class Ingredient {
-    protected String name;
-    protected Unit unit;
+    protected String name = "";
+    protected Unit unit = Unit.UNDEFINED;
     protected int amount;
 
     public String getName() {

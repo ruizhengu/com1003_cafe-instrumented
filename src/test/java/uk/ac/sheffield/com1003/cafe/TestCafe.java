@@ -62,14 +62,14 @@ public class TestCafe {
     @DisplayName("A TooManyIngredientsException is caught")
     @Test
     void testTooManyIngredients() {
-        Recipe soyLatte = new Recipe("Just Water", 1, Size.LARGE, 1);
+        Recipe latte = new Recipe("Just Water", 1, Size.LARGE, 1);
         assertThrows(TooManyIngredientsException.class, () -> {
-            soyLatte.addIngredient(new Water());
-            soyLatte.addIngredient(new Coffee(100));
+            latte.addIngredient(new Water());
+            latte.addIngredient(new Coffee());
         });
     }
 
-    @DisplayName("The menu is printed correctly")
+    @DisplayName("The menu has the correct size")
     @Test 
     void testMenuSize() throws Exception {
         Cafe cafe = new Cafe("Central Perk");
@@ -83,17 +83,32 @@ public class TestCafe {
         cafe.addRecipe(americano);
 
         assertEquals(2, cafe.getMenu().length);
+    }
+
+    @DisplayName("The menu is printed correctly")
+    @Test
+    void testPrintMenu() throws Exception {
+        Cafe cafe = new Cafe("Central Perk");
+
+        Recipe espresso = createEspressoRecipe();
+        cafe.addRecipe(espresso);
+
+        Recipe americano = new Recipe("Americano", 2, Size.REGULAR, 2);
+        americano.addIngredient(new Coffee());
+        americano.addIngredient(new Water());
+        cafe.addRecipe(americano);
 
         cafe.printMenu();
         ArrayList<String> lines = getPrintedLines();
-        assertEquals(7, lines.size());
+        assertEquals(8, lines.size());
         assertEquals("==========", lines.get(0));
         assertEquals("Welcome to Central Perk", lines.get(1));
-        assertEquals("==========", lines.get(2));
-        assertEquals("Espresso - 1.5", lines.get(3));
-        assertEquals("Americano - 2.0", lines.get(4));
-        assertEquals("==========", lines.get(5));
-        assertEquals("Enjoy!", lines.get(6));
+        assertEquals("Menu", lines.get(2));
+        assertEquals("==========", lines.get(3));
+        assertEquals("Espresso - 1.5", lines.get(4));
+        assertEquals("Americano - 2.0", lines.get(5));
+        assertEquals("==========", lines.get(6));
+        assertEquals("Enjoy!", lines.get(7));
     }
 
     @DisplayName("Placing order and printing pending orders")
@@ -113,11 +128,12 @@ public class TestCafe {
     @DisplayName("Placing order when cafe is out of capacity")
     @Test
     void placeOrderOutOfCapacity() {
-        assertThrows(CafeOutOfCapacityException.class, () -> {
+        Exception thrown = assertThrows(Exception.class, () -> {
             Cafe cafe = new Cafe("Central Perk", 2, 0);
             cafe.addRecipe(createEspressoRecipe());
             cafe.placeOrder("Espresso", "Jose", 3);
         });
+        assertEquals("uk.ac.sheffield.com1003.cafe.exceptions.CafeOutOfCapacityException", thrown.getClass().getName());
     }
 
 }

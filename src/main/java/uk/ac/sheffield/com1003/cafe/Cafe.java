@@ -169,6 +169,8 @@ public class Cafe {
      * @param amountPaid Money handed when placing order
      * @param customerName Name of customer placing order
      * @return True if the recipe name exists in the menu and the amount paid is sufficcient; return false otherwise
+     * @throws RecipeNotFoundException if the recipe name does not exist in the menu
+     * @throws CafeOutOfCapacityException if the cafe cannot take any more orders and is out of capacity
      */
     public boolean placeOrder(String recipeName, String customerName, double amountPaid) throws CafeOutOfCapacityException, RecipeNotFoundException {
         if (indexNextOrderToPlace >= orders.length)
@@ -204,7 +206,7 @@ public class Cafe {
 
     /**
      * If there is an order to serve, serves it ({@link Order#serve()}) and increments {@link Cafe#indexNextOrderToServe}
-     * @return The updated served order, or null of there is no order to serve
+     * @return The updated served order, or null of there is no order to serve.
      */
     public Order serveOrder() {
         Order o = orders[indexNextOrderToServe];
