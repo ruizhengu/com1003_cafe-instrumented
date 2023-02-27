@@ -15,8 +15,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCafe {
 
@@ -53,7 +52,7 @@ public class TestCafe {
 
     @DisplayName("The greeting function is implemented")
     @Test 
-    void cafeGreeting() {
+    public void cafeGreeting() {
         Cafe cafe = new Cafe("Central Perk");
         System.out.println("Test being executed");
         assertEquals(cafe.greeting(), "Welcome to Central Perk");
@@ -61,7 +60,7 @@ public class TestCafe {
 
     @DisplayName("A TooManyIngredientsException is caught")
     @Test
-    void testTooManyIngredients() {
+    public void testTooManyIngredients() {
         Recipe latte = new Recipe("Just Water", 1, Size.LARGE, 1);
         assertThrows(TooManyIngredientsException.class, () -> {
             latte.addIngredient(new Water());
@@ -70,8 +69,8 @@ public class TestCafe {
     }
 
     @DisplayName("The menu has the correct size")
-    @Test 
-    void testMenuSize() throws Exception {
+    @Test
+    public void testMenuSize() throws Exception {
         Cafe cafe = new Cafe("Central Perk");
 
         Recipe espresso = createEspressoRecipe();
@@ -87,7 +86,7 @@ public class TestCafe {
 
     @DisplayName("The menu is printed correctly")
     @Test
-    void testPrintMenu() throws Exception {
+    public void testPrintMenu() throws Exception {
         Cafe cafe = new Cafe("Central Perk");
 
         Recipe espresso = createEspressoRecipe();
@@ -113,7 +112,7 @@ public class TestCafe {
 
     @DisplayName("Placing order and printing pending orders")
     @Test
-    void printPendingOrders() throws Exception {
+    public void printPendingOrders() throws Exception {
         Cafe cafe = new Cafe("Central Perk", 2, 1);
         cafe.addRecipe(createEspressoRecipe());
         cafe.placeOrder("Espresso", "Jose", 3);
@@ -127,7 +126,7 @@ public class TestCafe {
 
     @DisplayName("Placing order when cafe is out of capacity")
     @Test
-    void placeOrderOutOfCapacity() {
+    public void placeOrderOutOfCapacity() {
         Exception thrown = assertThrows(Exception.class, () -> {
             Cafe cafe = new Cafe("Central Perk", 2, 0);
             cafe.addRecipe(createEspressoRecipe());
@@ -136,4 +135,13 @@ public class TestCafe {
         assertEquals("uk.ac.sheffield.com1003.cafe.exceptions.CafeOutOfCapacityException", thrown.getClass().getName());
     }
 
+    @DisplayName("App class exists")
+    @Test
+    public void testAppClassExists() {
+        try {
+            Class.forName("uk.ac.sheffield.com1003.cafe.App");
+        } catch (ClassNotFoundException e) {
+            fail("App class does not exist");
+        }
+    }
 }
