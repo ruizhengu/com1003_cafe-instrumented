@@ -26,20 +26,20 @@ public class Recipe {
 
     /**
      * Add ingredient to recipe if it does not already exist.
-     * If ingredient already exists, replace.
-     * @param ingredient Ingredient to add to recipe.
+     * If ingredient with the same name already exists, replace it with the new one.
+     * @param ingredient Ingredient to be added to recipe.
      */
-    public void addIngredient(Ingredient newIngredient) throws TooManyIngredientsException {
+    public void addIngredient(Ingredient ingredient) throws TooManyIngredientsException {
         int i = 0;
         while (i < ingredients.length) {
-            if (ingredients[i] == null || ingredients[i].getName().equals(newIngredient.getName())) {
-                ingredients[i] = newIngredient;
+            if (ingredients[i] == null || ingredients[i].equals(ingredient)) {
+                ingredients[i] = ingredient;
                 return;
             } else
                 i++;
         }
         if (i < ingredients.length)
-            ingredients[i] = newIngredient;
+            ingredients[i] = ingredient;
         else
             throw new TooManyIngredientsException();
     }
@@ -69,6 +69,4 @@ public class Recipe {
         return "Recipe [name=" + name + ", price=" + price + ", size=" + size + ", ingredients="
                 + Arrays.toString(ingredients) + "]";
     }
-
-    
 }

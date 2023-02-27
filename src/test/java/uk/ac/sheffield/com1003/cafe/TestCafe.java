@@ -1,35 +1,57 @@
 package uk.ac.sheffield.com1003.cafe;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import uk.ac.sheffield.com1003.cafe.Recipe.Size;
 import uk.ac.sheffield.com1003.cafe.exceptions.CafeOutOfCapacityException;
 import uk.ac.sheffield.com1003.cafe.exceptions.TooManyIngredientsException;
 import uk.ac.sheffield.com1003.cafe.ingredients.Coffee;
-import uk.ac.sheffield.com1003.cafe.ingredients.Milk;
 import uk.ac.sheffield.com1003.cafe.ingredients.Water;
-import uk.ac.sheffield.com1003.cafe.ingredients.Milk.Type;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class TestCafe {
+public class TestCafe {
+
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+    private final PrintStream originalErr = System.err;
+
+    @BeforeEach
+    public void setUpStreams() {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+    }
+
+    @AfterEach
+    public void restoreStreams() {
+        System.setOut(originalOut);
+        System.setErr(originalErr);
+    }
 
     private Recipe createEspressoRecipe() throws TooManyIngredientsException {
         Recipe espresso = new Recipe("Espresso", 1.5, Size.SMALL, 2);
-        try {
-            espresso.addIngredient(new Coffee());
-            espresso.addIngredient(new Water());
-        } catch (TooManyIngredientsException exc) {
-            // This should not happen
-            System.err.println("Too many ingredients");
-        }
-        
+        espresso.addIngredient(new Coffee());
+        espresso.addIngredient(new Water());
         return espresso;
     }
-    
+
+    private ArrayList<String> getPrintedLines() {
+        Stream<String> lines = outContent.toString().lines();
+        ArrayList<String> arrayList = new ArrayList<>();
+        lines.forEach(arrayList::add);
+        return arrayList;
+    }
+
+    @DisplayName("The greeting function is implemented")
     @Test 
     void cafeGreeting() {
         Cafe cafe = new Cafe("Central Perk");
@@ -37,25 +59,60 @@ class TestCafe {
         assertEquals(cafe.greeting(), "Welcome to Central Perk");
     }
 
+    @DisplayName("A TooManyIngredientsException is caught")
+    @Test
+    void testTooManyIngredients() {
+        Recipe soyLatte = new Recipe("Just Water", 1, Size.LARGE, 1);
+        assertThrows(TooManyIngredientsException.class, () -> {
+            soyLatte.addIngredient(new Water());
+            soyLatte.addIngredient(new Coffee(100));
+        });
+    }
+
+    @DisplayName("The menu is printed correctly")
     @Test 
-    void menuSize() throws TooManyIngredientsException {
+    void testMenuSize() throws Exception {
         Cafe cafe = new Cafe("Central Perk");
-        
+
         Recipe espresso = createEspressoRecipe();
         cafe.addRecipe(espresso);
 
-        Recipe soyLatte = new Recipe("Large Soy Latte", 2.5, Size.LARGE, 3);
-        soyLatte.addIngredient(new Coffee());
-        soyLatte.addIngredient(new Water());
-        soyLatte.addIngredient(new Milk(100, Type.SOY));
-        cafe.addRecipe(soyLatte);
+        Recipe americano = new Recipe("Americano", 2, Size.REGULAR, 2);
+        americano.addIngredient(new Coffee());
+        americano.addIngredient(new Water());
+        cafe.addRecipe(americano);
 
         assertEquals(2, cafe.getMenu().length);
+
         cafe.printMenu();
+        ArrayList<String> lines = getPrintedLines();
+        assertEquals(7, lines.size());
+        assertEquals("==========", lines.get(0));
+        assertEquals("Welcome to Central Perk", lines.get(1));
+        assertEquals("==========", lines.get(2));
+        assertEquals("Espresso - 1.5", lines.get(3));
+        assertEquals("Americano - 2.0", lines.get(4));
+        assertEquals("==========", lines.get(5));
+        assertEquals("Enjoy!", lines.get(6));
     }
 
+    @DisplayName("Placing order and printing pending orders")
     @Test
-    void placeOrderOutOfCapacity() throws Exception {
+    void printPendingOrders() throws Exception {
+        Cafe cafe = new Cafe("Central Perk", 2, 1);
+        cafe.addRecipe(createEspressoRecipe());
+        cafe.placeOrder("Espresso", "Jose", 3);
+        cafe.printPendingOrders();
+        ArrayList<String> lines = getPrintedLines();
+        assertEquals(2, lines.size());
+        assertEquals("Pending Orders:", lines.get(0));
+        assertEquals("Order: Espresso; For: Jose; Paid: 3.0", lines.get(1));
+
+    }
+
+    @DisplayName("Placing order when cafe is out of capacity")
+    @Test
+    void placeOrderOutOfCapacity() {
         assertThrows(CafeOutOfCapacityException.class, () -> {
             Cafe cafe = new Cafe("Central Perk", 2, 0);
             cafe.addRecipe(createEspressoRecipe());
@@ -63,10 +120,4 @@ class TestCafe {
         });
     }
 
-    @Disabled
-    @DisplayName("This is an example of a disabled test")
-    @Test
-    void failingTest() {
-        fail("Forcing this test to fail");
-    }
 }

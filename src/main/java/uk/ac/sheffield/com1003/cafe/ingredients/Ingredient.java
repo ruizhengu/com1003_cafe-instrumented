@@ -22,5 +22,10 @@ public abstract class Ingredient {
         return "Ingredient [name=" + name + ", unit=" + unit + ", amount=" + amount + "]";
     }
 
-    
+    @Override
+    public boolean equals(Object another) {
+        if (another == null || ! (another instanceof Ingredient))
+            return false;
+        return name.equals(((Ingredient)another).getName());
+    }
 }

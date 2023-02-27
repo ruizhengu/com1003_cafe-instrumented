@@ -80,7 +80,7 @@ public class Order {
         else
             sb.append(orderServed.format(formatter));
         sb.append("Thank you!");
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
     /**

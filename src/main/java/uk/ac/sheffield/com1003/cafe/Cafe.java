@@ -121,14 +121,13 @@ public class Cafe {
         StringBuffer sb = new StringBuffer();
         String lineBreak = System.getProperty("line.separator");
         sb.append("Pending Orders:");
-        sb.append(lineBreak);
         int i = indexNextOrderToServe;
         while (i < orders.length) {
-            sb .append(orders[i].toString());
             sb.append(lineBreak);
+            sb.append(orders[i].toString());
             i++;
         }
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
     /**
@@ -159,7 +158,7 @@ public class Cafe {
         }
         sb.append(sectionSep);
         sb.append("Enjoy!");
-        System.out.println(sb.toString());
+        System.out.println(sb);
     };
 
 

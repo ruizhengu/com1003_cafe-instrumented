@@ -20,6 +20,6 @@ public class Coffee extends Ingredient {
 
     @Override
     public String toString() {
-        return "Ingredient [name=" + name + ", unit=" + unit + ", amount=" + amount + ", decaf=" + decaf + "]";
+        return "Coffee [unit=" + unit + ", amount=" + amount + ", decaf=" + decaf + "]";
     }
 }

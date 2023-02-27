@@ -17,6 +17,6 @@ public class Syrup extends Ingredient {
 
     @Override
     public String toString() {
-        return "Ingredient [name=" + name + ", unit=" + unit + ", amount=" + amount + ", flavour=" + flavour + "]";
+        return "Syrup [unit=" + unit + ", amount=" + amount + ", flavour=" + flavour + "]";
     }
 }

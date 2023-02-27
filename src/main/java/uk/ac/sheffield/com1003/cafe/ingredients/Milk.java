@@ -21,6 +21,6 @@ public class Milk extends Ingredient {
 
     @Override
     public String toString() {
-        return "Ingredient [name=" + name + ", unit=" + unit + ", amount=" + amount + ", type=" + type + "]";
+        return "Milk [unit=" + unit + ", amount=" + amount + ", type=" + type + "]";
     }
 }
