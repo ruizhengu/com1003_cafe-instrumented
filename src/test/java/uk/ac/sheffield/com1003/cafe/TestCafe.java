@@ -1,5 +1,18 @@
 package uk.ac.sheffield.com1003.cafe;
 
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.*;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.*;
+import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,51 +21,26 @@ import uk.ac.sheffield.com1003.cafe.Recipe.Size;
 import uk.ac.sheffield.com1003.cafe.exceptions.CafeOutOfCapacityException;
 import uk.ac.sheffield.com1003.cafe.exceptions.TooManyIngredientsException;
 import uk.ac.sheffield.com1003.cafe.ingredients.Coffee;
+import uk.ac.sheffield.com1003.cafe.ingredients.Syrup;
 import uk.ac.sheffield.com1003.cafe.ingredients.Water;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestCafe {
-
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
-    private final PrintStream originalErr = System.err;
-
-    @BeforeEach
-    public void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-    }
-
-    @AfterEach
-    public void restoreStreams() {
-        System.setOut(originalOut);
-        System.setErr(originalErr);
-    }
-
-    private Recipe createEspressoRecipe() throws TooManyIngredientsException {
-        Recipe espresso = new Recipe("Espresso", 1.5, Size.SMALL, 2);
-        espresso.addIngredient(new Coffee());
-        espresso.addIngredient(new Water());
-        return espresso;
-    }
-
-    private ArrayList<String> getPrintedLines() {
-        Stream<String> lines = outContent.toString().lines();
-        ArrayList<String> arrayList = new ArrayList<>();
-        lines.forEach(arrayList::add);
-        return arrayList;
-    }
+public class TestCafe extends TestCafeBase {
 
     @DisplayName("The greeting function is implemented")
     @Test 
-    public void cafeGreeting() {
+    public void cafeGreeting() throws Exception {
         Cafe cafe = new Cafe("Central Perk");
         System.out.println("Test being executed");
         assertEquals(cafe.greeting(), "Welcome to Central Perk");
@@ -135,7 +123,7 @@ public class TestCafe {
         assertEquals("uk.ac.sheffield.com1003.cafe.exceptions.CafeOutOfCapacityException", thrown.getClass().getName());
     }
 
-    @DisplayName("App class exists")
+    @DisplayName("App class exists in the right package")
     @Test
     public void testAppClassExists() {
         try {
@@ -143,5 +131,112 @@ public class TestCafe {
         } catch (ClassNotFoundException e) {
             fail("App class does not exist");
         }
+    }
+
+    @DisplayName("CafeOutOfCapacityException class exists in the right package")
+    @Test
+    public void testCafeOutOfCapacityExceptionExists() {
+        try {
+            Class.forName("uk.ac.sheffield.com1003.cafe.exceptions.CafeOutOfCapacityException");
+        } catch (ClassNotFoundException e) {
+            fail("CafeOutOfCapacityException class does not exist");
+        }
+    }
+
+    @DisplayName("RecipeNotFoundException class exists in the right package")
+    @Test
+    public void testRecipeNotFoundExceptionExists() {
+        try {
+            Class.forName("uk.ac.sheffield.com1003.cafe.exceptions.RecipeNotFoundException");
+        } catch (ClassNotFoundException e) {
+            fail("RecipeNotFoundException class does not exist");
+        }
+    }
+
+    @DisplayName("Syrup class exists in the right package")
+    @Test
+    public void testSyrupExists() {
+        try {
+            Class.forName("uk.ac.sheffield.com1003.cafe.ingredients.Syrup");
+        } catch (ClassNotFoundException e) {
+            fail("Syrup class does not exist");
+        }
+    }
+
+    @DisplayName("Syrup class contains flavour field")
+    @Test
+    public void testSyrupContainsFlavourField() {
+        Syrup syrup = new Syrup();
+        Field[] fields = syrup.getClass().getDeclaredFields();
+
+        List<String> fieldNames = new ArrayList<>();
+        for (Field field : fields)
+            fieldNames.add(field.getName());
+        assertTrue(Arrays.asList("flavour").containsAll(fieldNames));
+    }
+
+    @DisplayName("App.main include creation of Espresso recipe (task 1)")
+    @Test
+    public void testTask1Espresso() {
+        String FILE_PATH = "src/main/java/uk/ac/sheffield/com1003/cafe/App.java";
+        try {
+            CompilationUnit cu = StaticJavaParser.parse(new File(FILE_PATH));
+            VoidVisitor<MutableBoolean> checker = new VoidVisitorAdapter<>() {
+                @Override
+                public void visit(MethodDeclaration md, MutableBoolean result) {
+                    super.visit(md, result);
+                    result.setValue(md.getNameAsString().equals("main"));
+                }
+            };
+            MutableBoolean result = new MutableBoolean(false);
+            checker.visit(cu, result);
+            assertTrue(result.getValue(), "App.main does not seem to exist");
+        } catch (FileNotFoundException e) {
+            fail("App.java does not seem to exist in the right package.");
+        }
+    }
+
+    @Test
+    public void testTask1Espresso2() {
+        String FILE_PATH = "src/main/java/uk/ac/sheffield/com1003/cafe/App.java";
+        CompilationUnit cu = null;
+        try {
+            cu = StaticJavaParser.parse(new File(FILE_PATH));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        VoidVisitor<List<String>> mainChecker = new MainMethodChecker();
+        List<String> results = new ArrayList<>();
+        mainChecker.visit(cu, results);
+        System.out.println(results);
+    }
+    private static class MainMethodChecker extends VoidVisitorAdapter<List<String>> {
+        @Override
+        public void visit(MethodDeclaration md, List<String> results) {
+            super.visit(md, results);
+            if (md.getNameAsString().equals("main")) {
+                results.add("Main method exists");
+            }
+        }
+
+        @Override
+        public void visit(MethodCallExpr callExpr, List<String> results) {
+            super.visit(callExpr, results);
+            System.out.println(callExpr.getNameAsString());
+
+            results.add(callExpr.getNameAsString());
+
+        }
+
+        @Override
+        public void visit(ObjectCreationExpr constr, List<String> results) {
+            super.visit(constr, results);
+            System.out.println(constr.getTypeAsString());
+
+            results.add(constr.getTypeAsString());
+
+        }
+
+
     }
 }

@@ -16,6 +16,9 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
     testCompileOnly 'junit:junit:4.13.2'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.9.0'
+
+    testImplementation 'org.apache.commons:commons-lang3:3.0'
+    testImplementation 'com.github.javaparser:javaparser-core-serialization:3.25.1'
 }
 
 test {
