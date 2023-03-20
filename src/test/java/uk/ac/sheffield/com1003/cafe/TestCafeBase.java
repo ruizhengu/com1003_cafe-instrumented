@@ -120,7 +120,20 @@ public class TestCafeBase {
         assertEquals(2, lines.size());
         assertEquals("Pending Orders:", lines.get(0));
         assertEquals("Order: Espresso; For: Jose; Paid: 3.0", lines.get(1));
+    }
 
+    @DisplayName("Place order and print receipt")
+    @Test
+    public void printReceipt() throws Exception {
+        Cafe cafe = new Cafe("Central Perk", 2, 1);
+        cafe.addRecipe(createEspressoRecipe());
+        cafe.placeOrder("Espresso", "Jose", 3);
+        Order o = cafe.serveOrder();
+        o.printReceipt();
+        ArrayList<String> lines = getPrintedLines();
+        assertEquals(5, lines.size());
+        assertTrue(lines.contains("Paid: 3.0"));
+        assertTrue(lines.contains("Espresso for Jose"));
     }
 
     @DisplayName("Placing order when cafe is out of capacity")
