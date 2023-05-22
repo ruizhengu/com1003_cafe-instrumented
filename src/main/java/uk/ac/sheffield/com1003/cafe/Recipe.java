@@ -50,6 +50,7 @@ public class Recipe {
     }
 
     public double getPrice() {
+        price = 0.0;
         return price;
     }
 

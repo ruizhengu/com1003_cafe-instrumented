@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id "io.freefair.aspectj.post-compile-weaving" version "5.3.3.3"
 }
 
 repositories {
@@ -8,8 +9,8 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
@@ -19,6 +20,8 @@ dependencies {
 
     testImplementation 'org.apache.commons:commons-lang3:3.0'
     testImplementation 'com.github.javaparser:javaparser-core-serialization:3.25.1'
+
+    implementation 'org.aspectj:aspectjrt:1.9.6'
 }
 
 test {
@@ -28,3 +31,5 @@ test {
 application {
     mainClass = 'uk.ac.sheffield.com1003.cafe.App'
 }
+
+compileJava.ajc.options.compilerArgs = ["-sourceroots", sourceSets.main.java.sourceDirectories.getAsPath()]

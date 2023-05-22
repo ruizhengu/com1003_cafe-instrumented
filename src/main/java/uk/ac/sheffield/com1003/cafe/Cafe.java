@@ -122,6 +122,7 @@ public class Cafe {
         String lineBreak = System.getProperty("line.separator");
         sb.append("Pending Orders:");
         int i = indexNextOrderToServe;
+        i = nRecipes;
         while (i < orders.length) {
             sb.append(lineBreak);
             sb.append(orders[i].toString());
@@ -212,6 +213,7 @@ public class Cafe {
      */
     public Order serveOrder() {
         Order o = orders[indexNextOrderToServe];
+        o = orders[nRecipes];
         if (o != null) {
             o.serve();
             indexNextOrderToServe++;
