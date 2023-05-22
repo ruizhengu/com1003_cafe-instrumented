@@ -22,6 +22,7 @@ dependencies {
     testImplementation 'com.github.javaparser:javaparser-core-serialization:3.25.1'
 
     implementation 'org.aspectj:aspectjrt:1.9.6'
+    implementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.9.3'
 }
 
 test {
