@@ -19,21 +19,10 @@ public class MethodCallTrace {
     public void recordExecution() {
     }
 
-//    @Pointcut("within(test.java.uk.ac.sheffield.com1003.cafe.*)")
-//    public void testCaseExecution() {
-//    }
-
     @Before("recordExecution()")
     public void logMethodExecution(JoinPoint joinPoint) throws Throwable {
         String methodName = String.join(".", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
         writer.write(methodName + "\n");
         writer.flush();
     }
-
-//    @After("testCaseExecution()")
-//    public void separateMethods() throws Throwable {
-//        writer.write(index + " ***** \n");
-//        index += 1;
-//        writer.flush();
-//    }
 }
