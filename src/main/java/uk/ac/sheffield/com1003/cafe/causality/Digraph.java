@@ -29,14 +29,22 @@ public class Digraph {
         return this;
     }
 
-    public void addNodeIfNotExists(String node) {
-        if (!nodeExists(node)) {
-            addNode(node);
+    public void addNodeIfNotExists(String nodeID, String nodeName) {
+        if (!nodeExists(nodeID)) {
+            addNode(nodeID, nodeName);
         }
     }
 
-    public void addNodeAndEdge(String startNode, String endNode) {
-        addNodeAndEdge(startNode, endNode, null);
+    public void addNodeAndEdge(String startNodeID, String startNodeName, String endNodeID, String endNodeName) {
+        if (!nodeExists(startNodeID)) {
+            addNode(startNodeID, startNodeName);
+        }
+        if (!nodeExists(endNodeID)) {
+            addNode(endNodeID, endNodeName);
+        }
+        if (!edgeExists(startNodeID, endNodeID)) {
+            link(startNodeID, endNodeID, null);
+        }
     }
 
     public void addNodeAndEdge(String startNode, String endNode, String style) {

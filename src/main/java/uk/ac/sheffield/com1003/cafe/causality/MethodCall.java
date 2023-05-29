@@ -20,19 +20,19 @@ public class MethodCall {
             public void visit(MethodDeclaration m, Void arg) {
                 if (!m.resolve().getQualifiedName().contains(aspectJPackage) && !m.resolve().getQualifiedName().contains(causalityPackage)) {
                     String callerNode = String.join(".", m.resolve().getClassName(), m.getNameAsString());
-                    graph.addNodeIfNotExists(callerNode);
+                    graph.addNodeIfNotExists(callerNode, m.resolve().getQualifiedName());
                     new VoidVisitorAdapter<Void>() {
                         @Override
                         public void visit(MethodCallExpr n, Void arg) {
                             String calleeNode = String.join(".", n.resolve().getClassName(), n.getNameAsString());
                             // If the method call belongs to a class in the project
                             if (n.resolve().getQualifiedName().contains(Util.PACKAGE_NAME)) {
-                                graph.addNodeAndEdge(callerNode, calleeNode);
+                                graph.addNodeAndEdge(callerNode, m.resolve().getQualifiedName(), calleeNode, n.resolve().getQualifiedName());
                             }
                             // If one of the arguments passed to a method is a method call
                             for (Expression argument : n.getArguments()) {
                                 if (argument.isMethodCallExpr()) {
-                                    Argument.addArgumentMethodCall(argument, graph, callerNode);
+                                    Argument.addArgumentMethodCall(argument, graph, callerNode, m.resolve().getQualifiedName());
                                 }
                             }
                             // Write all method names to a csv file
