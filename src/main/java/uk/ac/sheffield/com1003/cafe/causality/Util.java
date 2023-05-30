@@ -1,6 +1,7 @@
 package uk.ac.sheffield.com1003.cafe.causality;
 
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import org.json.JSONObject;
@@ -14,6 +15,9 @@ public class Util {
 
     public static Set<File> files = new HashSet<>();
     public static String PACKAGE_NAME = "uk.ac.sheffield.com1003.cafe";
+    public static String aspectJPackage = "aspect";
+    public static String causalityPackage = "causality";
+    public static String replacePackage = "replace";
 
     /**
      * Get the project path by the current OS
@@ -28,6 +32,14 @@ public class Util {
         } else {
             return linuxPath;
         }
+    }
+
+    public static boolean filterInstrumentation(MethodDeclaration m) {
+        return !m.resolve().getQualifiedName().contains(aspectJPackage) && !m.resolve().getQualifiedName().contains(causalityPackage) && !m.resolve().getQualifiedName().contains(replacePackage);
+    }
+
+    public static String getReferencePath() {
+        return "/home/ruizhen/Projects/Experiment/com1003_cafe-reference";
     }
 
     /**

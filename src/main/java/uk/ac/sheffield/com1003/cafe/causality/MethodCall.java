@@ -18,7 +18,8 @@ public class MethodCall {
         new VoidVisitorAdapter<Void>() {
             @Override
             public void visit(MethodDeclaration m, Void arg) {
-                if (!m.resolve().getQualifiedName().contains(aspectJPackage) && !m.resolve().getQualifiedName().contains(causalityPackage)) {
+                if (Util.filterInstrumentation(m)) {
+                    System.out.println(m.resolve().getQualifiedName());
                     String callerNode = String.join(".", m.resolve().getClassName(), m.getNameAsString());
                     graph.addNodeIfNotExists(callerNode, m.resolve().getQualifiedName());
                     new VoidVisitorAdapter<Void>() {
