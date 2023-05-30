@@ -1,20 +1,26 @@
 package uk.ac.sheffield.com1003.cafe;
 
 import java.util.Arrays;
-
 import uk.ac.sheffield.com1003.cafe.exceptions.TooManyIngredientsException;
 import uk.ac.sheffield.com1003.cafe.ingredients.Ingredient;
 
 public class Recipe {
-    public enum Size { SMALL, REGULAR, LARGE };
+
+    public enum Size {
+
+        SMALL, REGULAR, LARGE
+    }
+
     private String name;
+
     private double price;
+
     private Size size;
+
     private Ingredient[] ingredients;
 
     public Recipe(String name, double price) {
         this(name, price, Size.REGULAR, 3);
-        
     }
 
     public Recipe(String name, double price, Size size, int numberOfIngredients) {
@@ -27,6 +33,7 @@ public class Recipe {
     /**
      * Add ingredient to recipe if it does not already exist.
      * If ingredient with the same name already exists, replace it with the new one.
+     *
      * @param ingredient Ingredient to be added to recipe.
      * @throws TooManyIngredientsException if the number of ingredients in the recipe would be exceeded
      */
@@ -50,12 +57,17 @@ public class Recipe {
     }
 
     public double getPrice() {
+        // This is
         price = 0.0;
+        price += 1;
+        // the method
         return price;
+        // to replace
     }
 
     /**
      * Checks whether recipe is ready to be used.
+     *
      * @return True if all ingredients of the recipe have been added and false otherwise
      */
     public boolean isReady() {
