@@ -8,9 +8,6 @@ import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import org.checkerframework.checker.units.qual.A;
-import uk.ac.sheffield.com1003.cafe.causality.DataDependence;
-import uk.ac.sheffield.com1003.cafe.causality.MethodCall;
 import uk.ac.sheffield.com1003.cafe.causality.Util;
 
 import java.io.File;
@@ -37,6 +34,7 @@ public class App {
 
         solutionFiles = Util.getFiles(new File(DIR_SOLUTION));
         referenceFiles = Util.getFiles(new File(DIR_REFERENCE));
+        System.out.println(referenceFiles.size());
     }
 
     public void removeMethod(CompilationUnit cu, String methodName) {
@@ -54,8 +52,10 @@ public class App {
         new VoidVisitorAdapter<Void>() {
             @Override
             public void visit(MethodDeclaration method, Void arg) {
-                if (method.resolve().getQualifiedName().equals(methodName)) {
-                    System.out.println(method.getBody());
+                if (Util.filterInstrumentation(method)) {
+                    if (method.resolve().getQualifiedName().equals(methodName)) {
+                        System.out.println(method.getBody());
+                    }
                 }
             }
         }.visit(cu, null);
@@ -64,7 +64,6 @@ public class App {
     public void getReferenceImplementation(String methodName) {
         for (File file : referenceFiles) {
             try {
-                System.out.println(file);
                 cu = StaticJavaParser.parse(file);
                 referenceMethodVisitor(cu, methodName);
             } catch (FileNotFoundException e) {

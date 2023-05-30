@@ -4,6 +4,8 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -13,7 +15,6 @@ import java.util.regex.Pattern;
 
 public class Util {
 
-    public static Set<File> files = new HashSet<>();
     public static String PACKAGE_NAME = "uk.ac.sheffield.com1003.cafe";
     public static String aspectJPackage = "aspect";
     public static String causalityPackage = "causality";
@@ -39,7 +40,7 @@ public class Util {
     }
 
     public static String getReferencePath() {
-        return "/home/ruizhen/Projects/Experiment/com1003_cafe-reference";
+        return "/home/ruizhen/Projects/Experiment/com1003_cafe-reference/src/main/java";
     }
 
     /**
@@ -49,38 +50,20 @@ public class Util {
      * @return All the files in the directory
      */
     public static Set<File> getFiles(File dir) {
+        Set<File> files = new HashSet<>();
+        getFilesRecursion(dir, files);
+        return files;
+    }
+
+    public static void getFilesRecursion(File dir, Set<File> files) {
         for (File entry : Objects.requireNonNull(dir.listFiles())) {
             if (entry.isDirectory()) {
-                getFiles(entry);
+                getFilesRecursion(entry, files);
             } else {
                 files.add(entry);
             }
         }
-        return files;
     }
-
-    /**
-     * Get the .java file the method belongs by the method call expression
-     *
-     * @param expr Method call expression object
-     * @return The .java file the method belongs
-     */
-    public static File getFileOfMethod(MethodCallExpr expr) {
-        String classOfMethod = null;
-        Pattern p = Pattern.compile("(.*)\\..*");
-        Matcher m = p.matcher(expr.resolve().getQualifiedName());
-        if (m.find()) {
-            classOfMethod = m.group(1);
-        }
-        for (File file : files) {
-            assert classOfMethod != null;
-            if (file.toString().contains(classOfMethod.replace(".", "/"))) {
-                return file;
-            }
-        }
-        return null;
-    }
-
 
     /**
      * Get the last segment from a fully qualified name
